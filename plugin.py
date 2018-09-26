@@ -284,43 +284,43 @@ def UpdateDevice(Unit, nValue, sValue, vValue, AlwaysUpdate=False):
     return
 
 def floraScan(self):
-    # function to scan for devices, and store and compare the outcome
-    Domoticz.Log("Scanning for Mi Flower Mate sensors")
+	# function to scan for devices, and store and compare the outcome
+	Domoticz.Log("Scanning for Mi Flower Mate sensors")
 
-    #databaseFile=os.path.join(os.environ['HOME'],'XiaomiMiFlowerMates')
-    # first, let's get the list of devices we already know about
-    database = shelve.open('XiaomiMiMates')
+	#databaseFile=os.path.join(os.environ['HOME'],'XiaomiMiFlowerMates')
+	# first, let's get the list of devices we already know about
+	database = shelve.open('XiaomiMiMates')
 
-    try:
-        knownSensors = database['macs']
-        oldLength = len(knownSensors)
-        Domoticz.Debug("Already know something:" + str(oldLength))
-        Domoticz.Log("Already known devices:" + str(knownSensors))
-    except:
-        knownSensors = []
-        database['macs'] = knownSensors
-        oldLength = 0;
-        Domoticz.Debug("No existing sensors in system?")
+	try:
+		knownSensors = database['macs']
+		oldLength = len(knownSensors)
+		Domoticz.Debug("Already know something:" + str(oldLength))
+		Domoticz.Log("Already known devices:" + str(knownSensors))
+	except:
+		knownSensors = []
+		database['macs'] = knownSensors
+		oldLength = 0;
+		Domoticz.Debug("No existing sensors in system?")
 
-    #Next we scan to look for new sensors
-    try:
-        foundFloras = miflora_scanner.scan(BluepyBackend, 3)
-        Domoticz.Log("Number of devices found via bluetooth scan = " + str(len(foundFloras)))
-    except:
-        foundFloras = []
-        Domoticz.Log("Scan failed")
+	#Next we scan to look for new sensors
+	try:
+		foundFloras = miflora_scanner.scan(BluepyBackend, 3)
+		Domoticz.Log("Number of devices found via bluetooth scan = " + str(len(foundFloras)))
+	except:
+		foundFloras = []
+		Domoticz.Log("Scan failed")
 
-    for sensor in foundFloras:
-        if sensor not in knownSensors:
-            knownSensors.append(str(sensor))
-            Domoticz.Log("Found new device: " + str(sensor))
+	for sensor in foundFloras:
+		if sensor not in knownSensors:
+			knownSensors.append(str(sensor))
+			Domoticz.Log("Found new device: " + str(sensor))
 
-    if len(knownSensors) != oldLength:
-        database['macs'] = knownSensors
-        Domoticz.Log("Updating database")
+	if len(knownSensors) != oldLength:
+		database['macs'] = knownSensors
+		Domoticz.Log("Updating database")
 
-    database.close()
+	database.close()
 
-    self.macs = knownSensors
-    self.createSensors()
-    return;
+	self.macs = knownSensors
+	self.createSensors()
+	return;
